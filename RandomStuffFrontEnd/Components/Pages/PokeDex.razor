@@ -1,0 +1,38 @@
+﻿@page "/pokedex"
+@using RandomStuffFrontEnd.Components.Models
+<h3>PokeDex</h3>
+
+@inject HttpClient HttpClient
+
+@if (pokemons == null)
+{
+<p><em>Loading...</em></p>
+}
+else
+{
+<table class="PokeDex">
+    <thead>
+        <tr>
+            <th>DexEntry</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pokemon in pokemons)
+        {
+            <tr>
+                <td>@pokemon.PokemonId</td>
+                <td>@pokemon.PokemonName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private List<Pokemon> pokemons = new();
+    protected override async Task OnInitializedAsync()
+    {
+        pokemons = await HttpClient.GetFromJsonAsync<List<Pokemon>>("https://localhost:7168/GetPokemons");
+    }
+}
