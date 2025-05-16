@@ -1,0 +1,44 @@
+﻿@page "/userdex"
+@using RandomStuffFrontEnd.Components.Models
+<h3>UserDex</h3>
+
+@inject HttpClient HttpClient
+
+@if (userCapturedPokemon == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="UserDex">
+        <thead>
+            <tr>
+                <th>DexEntry</th>
+                <th>Name</th>
+                <th>Nickname</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var capturedPokemon in userCapturedPokemon)
+            {
+                <tr>
+                    <td>@capturedPokemon.PokemonId</td>
+                    <td>@capturedPokemon.Pokemon.PokemonName</td>
+                    <td>@capturedPokemon.Nickname</td>
+                    <td>
+                        <img src="https://github.com/PokeAPI/sprites/blob/master/sprites/items/poke-ball.png?raw=true" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CapturedPokemon> userCapturedPokemon = new();
+    protected override async Task OnInitializedAsync()
+    {
+        long userId = 1;
+        userCapturedPokemon = await HttpClient.GetFromJsonAsync<List<CapturedPokemon>>($"/GetUserCapturedPokemon?UserId={userId}");
+    }
+}

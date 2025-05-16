@@ -36,6 +36,6 @@ else
     private List<Pokemon> pokemons = new();
     protected override async Task OnInitializedAsync()
     {
-        pokemons = await HttpClient.GetFromJsonAsync<List<Pokemon>>("https://localhost:7168/GetPokemons");
+        pokemons = await HttpClient.GetFromJsonAsync<List<Pokemon>>("/GetPokemons");
     }
 }
