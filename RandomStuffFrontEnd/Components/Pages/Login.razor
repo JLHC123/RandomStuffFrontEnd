@@ -1,12 +1,48 @@
 ﻿@page "/login"
 @using Radzen
 @using Radzen.Blazor
+@using RandomStuffFrontEnd.Components.Models
+@rendermode InteractiveServer
 
 @inject HttpClient httpClient
 @inject NavigationManager Navigation
 
 <h3>Login</h3>
 
-@code {
+<RadzenTemplateForm Data="@user" TItem="LoginUserModel" Submit="@OnLogin">
+    <RadzenText>Username</RadzenText>
+    <RadzenTextBox @bind-Value="@user.UserName" Style="width:100%" />
+    <RadzenText>Password</RadzenText>
+    <RadzenPassword @bind-Value="@user.Password" Style="width:100%" ShowPasswordToggle="true" />
 
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Login" Style="margin-top: 16px; background-color:#d50032; color:white;" />
+
+    <p style="color:red">@ErrorMessage</p>
+</RadzenTemplateForm>
+
+@code {
+    LoginUserModel user = new LoginUserModel();
+    private string ErrorMessage;
+
+    async Task OnLogin(LoginUserModel user)
+    {
+        try
+        {
+            var response = await httpClient.PostAsJsonAsync("/Login", user);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/pokedex");
+            }
+            else
+            {
+                ErrorMessage = "Incorrect username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "An error occurred while trying to log in.";
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
