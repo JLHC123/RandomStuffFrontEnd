@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using RandomStuffFrontEnd.Components;
+using RandomStuffFrontEnd.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,9 @@ builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri("https://localhost:7168/api/")
 });
+
+builder.Services.AddScoped<UserSession>();
+builder.Services.AddScoped<ProtectedSessionStorage>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

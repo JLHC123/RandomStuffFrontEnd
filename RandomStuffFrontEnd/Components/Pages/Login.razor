@@ -2,29 +2,30 @@
 @using Radzen
 @using Radzen.Blazor
 @using RandomStuffFrontEnd.Components.Models
+@using RandomStuffFrontEnd.Components.Services
 @rendermode InteractiveServer
 
 @inject HttpClient httpClient
 @inject NavigationManager Navigation
+@inject UserSession userSession
 
 <h3>Login</h3>
 
-<RadzenTemplateForm Data="@user" TItem="LoginUserModel" Submit="@OnLogin">
+<RadzenTemplateForm Data="@user" TItem="User" Submit="@OnLogin">
     <RadzenText>Username</RadzenText>
     <RadzenTextBox @bind-Value="@user.UserName" Style="width:100%" />
     <RadzenText>Password</RadzenText>
     <RadzenPassword @bind-Value="@user.Password" Style="width:100%" ShowPasswordToggle="true" />
-
     <RadzenButton ButtonType="ButtonType.Submit" Text="Login" Style="margin-top: 16px; background-color:#d50032; color:white;" />
 
     <p style="color:red">@ErrorMessage</p>
 </RadzenTemplateForm>
 
 @code {
-    LoginUserModel user = new LoginUserModel();
+    User user = new User();
     private string ErrorMessage;
 
-    async Task OnLogin(LoginUserModel user)
+    async Task OnLogin(User user)
     {
         try
         {
@@ -32,7 +33,10 @@
 
             if (response.IsSuccessStatusCode)
             {
-                Navigation.NavigateTo("/pokedex");
+                var userResponse = await response.Content.ReadFromJsonAsync<UserLoginResponse>();
+                user.UserId = userResponse.UserId;
+                await userSession.Login(user.UserId);
+                Navigation.NavigateTo("/userdex");
             }
             else
             {

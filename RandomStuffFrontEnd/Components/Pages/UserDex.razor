@@ -1,13 +1,24 @@
 ﻿@page "/userdex"
 @using RandomStuffFrontEnd.Components.Models
-<h3>UserDex</h3>
+@using RandomStuffFrontEnd.Components.Services
+@rendermode InteractiveServer
 
 @inject HttpClient HttpClient
+@inject NavigationManager Navigation
+@inject UserSession userSession
 
-@if (userCapturedPokemon == null)
+<h3>UserDex</h3>
+
+@if (loading)
 {
     <p><em>Loading...</em></p>
 }
+
+else if (userSession.UserId == 0)
+{
+    <p>Redirecting to login...</p>
+}
+
 else
 {
     <table class="UserDex">
@@ -35,10 +46,25 @@ else
 }
 
 @code {
-    private List<CapturedPokemon> userCapturedPokemon = new();
-    protected override async Task OnInitializedAsync()
+    private bool loading = true;
+    private List<CapturedPokemon> userCapturedPokemon;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        long userId = 1;
-        userCapturedPokemon = await HttpClient.GetFromJsonAsync<List<CapturedPokemon>>($"/GetUserCapturedPokemon?UserId={userId}");
+        if (firstRender)
+        {
+            await userSession.LoadSessionUserIdAsync();
+
+            if (userSession.UserId == 0)
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            userCapturedPokemon = await HttpClient.GetFromJsonAsync<List<CapturedPokemon>>($"/GetUserCapturedPokemon?UserId={userSession.UserId}");
+
+            loading = false;
+            StateHasChanged();
+        }
     }
 }

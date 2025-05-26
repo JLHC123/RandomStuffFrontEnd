@@ -8,28 +8,29 @@
 {
 <p><em>Loading...</em></p>
 }
+
 else
 {
-<table class="PokeDex">
-    <thead>
-        <tr>
-            <th>DexEntry</th>
-            <th>Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var pokemon in pokemons)
-        {
+    <table class="PokeDex">
+        <thead>
             <tr>
-                <td>@pokemon.PokemonId</td>
-                <td>@pokemon.PokemonName</td>
-                <td>
-                        <img src="https://github.com/PokeAPI/sprites/blob/master/sprites/items/poke-ball.png?raw=true" />
-                </td>
+                <th>DexEntry</th>
+                <th>Name</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var pokemon in pokemons)
+            {
+                <tr>
+                    <td>@pokemon.PokemonId</td>
+                    <td>@pokemon.PokemonName</td>
+                    <td>
+                            <img src="https://github.com/PokeAPI/sprites/blob/master/sprites/items/poke-ball.png?raw=true" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
